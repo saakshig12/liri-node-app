@@ -10,7 +10,36 @@ var spotify = new Spotify(keys.spotify);
 var command1 = process.argv[2]
 var command2 = process.argv.slice(3).join(' ')
 
-var movies = function (movieName) {
+var concertThis = function (artist) {
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"; 
+    console.log(queryUrl);
+
+    axios.get(queryUrl).then(
+        function (response) {
+            if (response.data[0]) {
+                console.log("Venue of the name: " + response.data[0].venue.name);
+                console.log("Venue location: " + response.data[0].venue.city + ", " + response.data[0].venue.area);
+                console.log("Date of event (MM/DD/YYYY): " + moment(response.data[0].datetime).format('MM DD YYYY'));
+            }
+        });
+}
+var spotifyThisSong = function(song) {
+    spotify
+    .search({ type: 'track', query: song, limit: 1 })
+    .then(function (response) {
+        for (i = 0; i < response.tracks.items.length; i++) {
+            console.log("Song name: " + response.tracks.items[i].name);
+            console.log("Artists: " + response.tracks.items[i].artists[0].name);
+            console.log("Album name: " + response.tracks.items[i].album.name);
+            console.log("Preview URL: " + response.tracks.items[i].preview_url);
+        }
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+}
+
+var movieThis = function (movieName) {
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
     console.log(queryUrl);
@@ -30,4 +59,16 @@ var movies = function (movieName) {
             }
         });
 }
+var doWhatItSay = function () {
+    fs.readFile("random.txt", "utf8", function (error, data) {
+        if(error) {
+            console.log(error);
+        } else {
+            console.log("data: " + data);
+            var command = data.split(",");
+            pick(command[0], command[1]);
+        }
+    })
+}
+
 
