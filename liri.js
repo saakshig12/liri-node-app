@@ -6,11 +6,8 @@ var fs = require("fs");
 var moment = require('moment');
 var axios = require('axios')
 var spotify = new Spotify(keys.spotify);
-
 var command = process.argv[2]; 
 var value = process.argv[3]; 
-
-
 
 var concertThis = function (artist) {
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
@@ -25,9 +22,9 @@ var concertThis = function (artist) {
             }
         });
 }
-var spotifyThisSong = function (song) {
+var spotifyThisSong = function () {
     spotify
-        .search({ type: 'track', query: song, limit: 1 })
+        .search({ type: 'track', query: value, limit: 1 })
         .then(function (response) {
             for (i = 0; i < response.tracks.items.length; i++) {
                 console.log("Song name: " + response.tracks.items[i].name);
@@ -48,12 +45,12 @@ var movieThis = function (movieName) {
 
     axios.get(queryUrl).then(
         function (response) {
-            console.log(response);
+            //console.log(response);
             if (response) {
                 console.log("Title: " + response.data.Title);
                 console.log("Year: " + response.data.Year);
                 console.log("IMDB Rating: " + response.data.imdbRating);
-                console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
+                console.log("Rotten Tomatoes Rating: " + response.data.Ratings[0].Value);
                 console.log("Country: " + response.data.Country);
                 console.log("Language: " + response.data.Language);
                 console.log("Plot: " + response.data.Plot);
@@ -66,14 +63,26 @@ var doWhatItSay = function () {
         if (err) {
             console.log(err);
         } else {
-            console.log("data: " + data);
+            // console.log("data: " + data);
             var command = data.split(",");
-            //var random = Math.floor(Math.random(command, value));
-            //random();
+            // console.log(command);
+            switch (command[0], command[1]) {
+                case "concert-this":
+                    concertThis(command[1]);
+                    break;
+                case "spotify-this-song":
+                    spotifyThisSong(command[1]);
+                    break;
+                case "movie-this":
+                    movieThis(command[1]);
+                    break;
+                case "do-what-it-says":
+                    doWhatItSay();
+                    break;
+            };            
         }
     })
 }
-
 
 switch (command) {
     case "concert-this":
