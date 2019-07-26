@@ -7,10 +7,11 @@ var moment = require('moment');
 var axios = require('axios')
 var spotify = new Spotify(keys.spotify);
 var command = process.argv[2]; 
-var value = process.argv[3]; 
+var value = process.argv.slice(3); 
 
 var concertThis = function (artist) {
-    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
+    var artistName = artist.replace(/"/gm, '');
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
     console.log(queryUrl);
 
     axios.get(queryUrl).then(
@@ -22,7 +23,7 @@ var concertThis = function (artist) {
             }
         });
 }
-var spotifyThisSong = function () {
+var spotifyThisSong = function (value) {
     spotify
         .search({ type: 'track', query: value, limit: 1 })
         .then(function (response) {
@@ -62,28 +63,21 @@ var doWhatItSay = function () {
     fs.readFile("random.txt", "utf8", function (err, data) {
         if (err) {
             console.log(err);
-        } else {
-            // console.log("data: " + data);
-            var command = data.split(",");
-            // console.log(command);
-            switch (command[0], command[1]) {
-                case "concert-this":
-                    concertThis(command[1]);
-                    break;
-                case "spotify-this-song":
-                    spotifyThisSong(command[1]);
-                    break;
-                case "movie-this":
-                    movieThis(command[1]);
-                    break;
-                case "do-what-it-says":
-                    doWhatItSay();
-                    break;
-            };            
+            return;
         }
+
+            //console.log("data: " + data);
+            var command = data.split(",")[0];
+            var value = data.split(",")[1];
+        
+            doCommand(command, value);
+                   
+        
     })
 }
 
+function doCommand(command, value) {
+    console.log(command)
 switch (command) {
     case "concert-this":
         concertThis(value);
@@ -95,10 +89,10 @@ switch (command) {
         movieThis(value);
         break;
     case "do-what-it-says":
-        doWhatItSay(value);
+        doWhatItSay();
         break;
 };
+}
 
-
-
+doCommand(command, value)
 
