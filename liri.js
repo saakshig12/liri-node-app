@@ -7,11 +7,13 @@ var moment = require('moment');
 var axios = require('axios')
 var spotify = new Spotify(keys.spotify);
 
-var command1 = process.argv[2]
-var command2 = process.argv.slice(3).join(' ')
+var command = process.argv[2]; 
+var value = process.argv[3]; 
+
+
 
 var concertThis = function (artist) {
-    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"; 
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     console.log(queryUrl);
 
     axios.get(queryUrl).then(
@@ -23,20 +25,20 @@ var concertThis = function (artist) {
             }
         });
 }
-var spotifyThisSong = function(song) {
+var spotifyThisSong = function (song) {
     spotify
-    .search({ type: 'track', query: song, limit: 1 })
-    .then(function (response) {
-        for (i = 0; i < response.tracks.items.length; i++) {
-            console.log("Song name: " + response.tracks.items[i].name);
-            console.log("Artists: " + response.tracks.items[i].artists[0].name);
-            console.log("Album name: " + response.tracks.items[i].album.name);
-            console.log("Preview URL: " + response.tracks.items[i].preview_url);
-        }
-    })
-    .catch(function (err) {
-        console.log(err);
-    });
+        .search({ type: 'track', query: song, limit: 1 })
+        .then(function (response) {
+            for (i = 0; i < response.tracks.items.length; i++) {
+                console.log("Song name: " + response.tracks.items[i].name);
+                console.log("Artists: " + response.tracks.items[i].artists[0].name);
+                console.log("Album name: " + response.tracks.items[i].album.name);
+                console.log("Preview URL: " + response.tracks.items[i].preview_url);
+            }
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
 }
 
 var movieThis = function (movieName) {
@@ -60,15 +62,34 @@ var movieThis = function (movieName) {
         });
 }
 var doWhatItSay = function () {
-    fs.readFile("random.txt", "utf8", function (error, data) {
-        if(error) {
-            console.log(error);
+    fs.readFile("random.txt", "utf8", function (err, data) {
+        if (err) {
+            console.log(err);
         } else {
             console.log("data: " + data);
             var command = data.split(",");
-            pick(command[0], command[1]);
+            //var random = Math.floor(Math.random(command, value));
+            //random();
         }
     })
 }
+
+
+switch (command) {
+    case "concert-this":
+        concertThis(value);
+        break;
+    case "spotify-this-song":
+        spotifyThisSong(value);
+        break;
+    case "movie-this":
+        movieThis(value);
+        break;
+    case "do-what-it-says":
+        doWhatItSay(value);
+        break;
+};
+
+
 
 
